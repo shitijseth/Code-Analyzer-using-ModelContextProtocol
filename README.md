@@ -1,2 +1,2 @@
-# Code-Analyzer-using-ModelConceptProtocol
-Get suggestions for code improvement in a repo using Model Concept Protocol (MCP)
+# Code-Analyzer-using-ModelContextProtocol
+Get suggestions for code improvement in a repo using Model Context Protocol (MCP)
