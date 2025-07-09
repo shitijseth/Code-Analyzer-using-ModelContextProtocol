@@ -4,6 +4,23 @@ from mcp.server import McpServer, McpHandler
 import requests
 from transformers import pipeline
 
+
+def fetch_repo_files(owner: str, repo: str, path: str = ""):
+    """Recursively fetch all items in a GitHub repository path."""
+    url = f"https://api.github.com/repos/{owner}/{repo}/contents/{path}"
+    response = requests.get(url)
+    if response.status_code != 200:
+        return []
+
+    items = response.json()
+    files = []
+    for item in items:
+        if item.get('type') == 'file':
+            files.append(item)
+        elif item.get('type') == 'dir':
+            files.extend(fetch_repo_files(owner, repo, item.get('path', '')))
+    return files
+
 # Load an open source LLM for text generation.
 # We use GPT-J 6B; if GPU is available, it will use it; otherwise, it falls back to CPU.
 try:
@@ -37,19 +54,16 @@ class MyMcpHandler(McpHandler):
         if not owner or not repo:
             return "Error: Missing 'owner' or 'repo' parameters."
 
-        # Use GitHub API to fetch repository contents.
-        url = f"https://api.github.com/repos/{owner}/{repo}/contents"
-        response = requests.get(url)
-        if response.status_code != 200:
-            return f"Error: Unable to fetch repository (Status code: {response.status_code})."
-
-        contents = response.json()
+        # Recursively fetch repository contents.
+        contents = fetch_repo_files(owner, repo)
+        if not contents:
+            return "Error: Unable to fetch repository contents."
         analysis_results = []
         for item in contents:
             # Check for Python files for a simple analysis.
-            if item['type'] == 'file' and item['name'].endswith('.py'):
+            if item['name'].endswith('.py'):
                 analysis_results.append(
-                    f"File '{item['name']}' might benefit from improved error handling and better comments."
+                    f"File '{item['path']}' might benefit from improved error handling and better comments."
                 )
         if not analysis_results:
             analysis_results.append("No Python files found for analysis.")
@@ -71,25 +85,22 @@ class MyMcpHandler(McpHandler):
         if not owner or not repo or not question:
             return "Error: Missing one or more parameters: 'owner', 'repo', 'question'."
 
-        # Fetch repository contents.
-        url = f"https://api.github.com/repos/{owner}/{repo}/contents"
-        response = requests.get(url)
-        if response.status_code != 200:
-            return f"Error: Unable to fetch repository contents (Status code: {response.status_code})."
-        
-        contents = response.json()
+        # Fetch repository contents recursively.
+        contents = fetch_repo_files(owner, repo)
+        if not contents:
+            return "Error: Unable to fetch repository contents."
         code_aggregate = ""
         # Iterate through each item to fetch code from Python files.
         for item in contents:
-            if item['type'] == 'file' and item['name'].endswith('.py'):
+            if item['name'].endswith('.py'):
                 download_url = item.get('download_url')
                 if download_url:
                     file_resp = requests.get(download_url)
                     if file_resp.status_code == 200:
-                        code_aggregate += f"\n\n# File: {item['name']}\n"
+                        code_aggregate += f"\n\n# File: {item['path']}\n"
                         code_aggregate += file_resp.text
                     else:
-                        code_aggregate += f"\n\n# File: {item['name']} - Unable to fetch file content.\n"
+                        code_aggregate += f"\n\n# File: {item['path']} - Unable to fetch file content.\n"
         if not code_aggregate:
             code_aggregate = "No Python files found in the repository."
 
