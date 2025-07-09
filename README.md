@@ -43,10 +43,10 @@ pip install -r requirements.txt
 # Example using the default open-source model:
 python mcp_server.py
 
-# To use ChatGPT or Claude, set the following environment variables first:
-#   LLM_CHOICE=chatgpt  # or "claude"
-#   OPENAI_API_KEY=your-openai-key      # required for ChatGPT
-#   ANTHROPIC_API_KEY=your-anthropic-key  # required for Claude
+To use ChatGPT or Claude, set the following environment variables first:
+   LLM_CHOICE=chatgpt  # or "claude"
+   OPENAI_API_KEY=your-openai-key      # required for ChatGPT
+  ANTHROPIC_API_KEY=your-anthropic-key  # required for Claude
 python mcp_server.py
   </pre>
   <p>You should see a message indicating that the server has started (e.g., “Starting MCP server on port 5000...”).</p>
