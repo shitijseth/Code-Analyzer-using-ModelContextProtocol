@@ -40,6 +40,13 @@ pip install -r requirements.txt
   <h2>Step 4: Run the MCP Server</h2>
   <p>In one terminal, start the MCP server:</p>
   <pre>
+# Example using the default open-source model:
+python mcp_server.py
+
+# To use ChatGPT or Claude, set the following environment variables first:
+#   LLM_CHOICE=chatgpt  # or "claude"
+#   OPENAI_API_KEY=your-openai-key      # required for ChatGPT
+#   ANTHROPIC_API_KEY=your-anthropic-key  # required for Claude
 python mcp_server.py
   </pre>
   <p>You should see a message indicating that the server has started (e.g., “Starting MCP server on port 5000...”).</p>
@@ -55,7 +62,7 @@ python mcp_client.py
   <ul>
     <li><strong>Python Version Errors:</strong> Make sure you’re on Python 3.10 or higher.</li>
     <li><strong>Virtual Environment Issues:</strong> Double-check that your environment is activated before installing or running.</li>
-    <li><strong>LLM Loading Problems:</strong> GPT-J 6B is large. Ensure you have sufficient resources. If needed, use a smaller model like GPT-Neo.</li>
+    <li><strong>LLM Loading Problems:</strong> The default CodeLlama model may require significant resources. You can switch models by setting <code>LLM_CHOICE</code> to <code>chatgpt</code> or <code>claude</code> if you have the appropriate API keys.</li>
   </ul>
   
   <hr>

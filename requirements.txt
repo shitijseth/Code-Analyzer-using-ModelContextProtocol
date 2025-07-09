@@ -2,3 +2,5 @@ mcp>=1.5.0         # MCP package (requires Python 3.10+)
 requests>=2.25.0   # For making HTTP requests (e.g., GitHub API calls)
 transformers>=4.0.0  # Hugging Face Transformers library for LLM integration
 torch>=1.7.0       # PyTorch, required by the Transformers library
+openai>=1.0.0      # For ChatGPT API integration
+anthropic>=0.3.0   # For Claude API integration
